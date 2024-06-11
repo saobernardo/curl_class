@@ -1,7 +1,7 @@
 <?php
 
 class HttpCall{
-  function curl_call($type, $url, $parametros, $tokenSession = null, $authorization = null, $upload_file = null){
+  function curl_call($type, $url, $parametros, $tokenSession = null, $authorization = null, $ssl_verify = true, $upload_file = null, $SSL_cert = null, $SSL_key = null, $cert_type= null){
     //primeiras validações de dados
     
     if(!is_array($parametros)){
@@ -39,6 +39,22 @@ class HttpCall{
       curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
       //string user:password
       curl_setopt($ch, CURLOPT_USERPWD, $authorization);
+    }
+
+    if(!$ssl_verify){
+      curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+	    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    }
+
+    if(!empty($SSL_cert) && !empty($cert_type)){
+      curl_setopt($ch, CURLOPT_SSLCERTTYPE, $cert_type);
+      curl_setopt($ch, CURLOPT_SSLCERT, $SSL_cert);
+      curl_setopt($ch, CURLOPT_SSLCERTPASSWD, $SSL_key);
+      curl_setopt($ch, CURLOPT_SSLKEYPASSWD, $SSL_key);
+    }
+
+    if(!empty($upload_file)){
+      curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
     }
 
     curl_setopt($ch, CURLOPT_TIMEOUT, 60);
